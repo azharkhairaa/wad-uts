@@ -70,6 +70,64 @@ button:hover {
   padding: 1.5rem 2rem;
 }
 
+/* toolbar: cari & urutkan */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.input-cari {
+  flex: 1 1 240px;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--abu-muda);
+  border-radius: 8px;
+  background: var(--warna-kartu);
+  color: var(--warna-teks);
+}
+
+.input-cari:focus {
+  outline: 2px solid var(--mauve);
+  outline-offset: 1px;
+}
+
+.grup-urut {
+  display: flex;
+}
+
+.grup-urut button {
+  background: var(--warna-kartu);
+  color: var(--mauve);
+  border: 1px solid var(--mauve);
+  border-radius: 0;
+}
+
+.grup-urut button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.grup-urut button:last-child {
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+}
+
+.grup-urut button:hover {
+  background: var(--warna-hover);
+}
+
+.grup-urut button.aktif {
+  background: var(--mauve);
+  color: #fff;
+}
+
+.jumlah-hasil {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--warna-redup);
+}
+
 /* status loading / kosong / error */
 .info {
   padding: 2rem;
