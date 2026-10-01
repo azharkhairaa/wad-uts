@@ -5,14 +5,14 @@ from typing import Annotated, Literal
 
 from fastapi import FastAPI, HTTPException, Path as PathParam
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 SEED_FILE = Path(__file__).parent / "data" / "seed_barang.json"
 
 # grup endpoint di /docs
 TAGS = [
     {"name": "Root", "description": "Cek status backend."},
-    {"name": "Referensi", "description": "Daftar pilihan kategori dan lokasi gudang."},
+    {"name": "Referensi", "description": "Daftar pilihan kategori, kemasan, dan lokasi gudang."},
     {"name": "Barang", "description": "Ambil, tambah dan hapus data barang inventaris."},
     {"name": "Stok", "description": "Ubah stok barang: tambah stok (barang masuk) atau jual (barang keluar)."},
 ]
@@ -22,8 +22,9 @@ app = FastAPI(
     description=(
         "Backend dashboard inventaris biji kopi roastery (UTS Web Application Development, Soal B).\n\n"
         "**Status stok:** Habis = 0 · Menipis = 1-10 pack · Aman = lebih dari 10 pack.\n\n"
-        "**Aturan perubahan data:** nama bebas diisi; kategori dan lokasi gudang hanya dari daftar."
-        "`/referensi`; stok hanya bisa berubah lewat endpoint tambah stok atau jual."
+        "**Aturan perubahan data:** nama bebas diisi; kategori, kemasan, dan lokasi gudang hanya dari daftar "
+        "`/referensi`; stok hanya bisa berubah lewat endpoint tambah stok atau jual.\n\n"
+        "**Satuan:** stok dalam pack, berat kemasan dalam gram (`berat_gram`)."
     ),
     version="1.0.0",
     openapi_tags=TAGS,
@@ -67,6 +68,10 @@ LOKASI_GUDANG = (
 )
 LokasiGudang = Literal[LOKASI_GUDANG]
 
+# ukuran kemasan per pack (gram)
+BERAT_KEMASAN = (100, 200, 500, 1000)
+BeratKemasan = Literal[BERAT_KEMASAN]
+
 # skema request: field wajib, stok harus angka bulat >= 0 (string ditolak)
 class BarangIn(BaseModel):
     model_config = ConfigDict(
@@ -74,8 +79,9 @@ class BarangIn(BaseModel):
         json_schema_extra={
             "examples": [
                 {
-                    "nama": "Arabika Kerinci 200 gr",
+                    "nama": "Arabika Kerinci",
                     "kategori": "Arabika Single Origin",
+                    "berat_gram": 200,
                     "jumlah_stok": 20,
                     "lokasi_gudang": "Gudang Bandung - Rak A4",
                 }
@@ -85,8 +91,17 @@ class BarangIn(BaseModel):
 
     nama: str = Field(min_length=1, description="Nama produk, bebas diisi")
     kategori: Kategori = Field(description="Salah satu kategori dari /referensi")
+    berat_gram: BeratKemasan = Field(description="Berat per pack dalam gram, salah satu dari /referensi")
     jumlah_stok: int = Field(ge=0, strict=True, description="Stok awal dalam pack, bilangan bulat >= 0")
     lokasi_gudang: LokasiGudang = Field(description="Salah satu lokasi dari /referensi")
+
+    # Literal tidak bisa strict, jadi 200.0 / "200" ditolak manual di sini
+    @field_validator("berat_gram", mode="before")
+    @classmethod
+    def berat_harus_bilangan_bulat(cls, nilai):
+        if not isinstance(nilai, int) or isinstance(nilai, bool):
+            raise ValueError("berat_gram harus bilangan bulat")
+        return nilai
 
 # body tambah stok & jual: hanya jumlah, field lain ditolak
 class JumlahStokIn(BaseModel):
@@ -99,11 +114,13 @@ class Barang(BaseModel):
     id: int
     nama: str
     kategori: Kategori
+    berat_gram: BeratKemasan
     jumlah_stok: int
     lokasi_gudang: LokasiGudang
 
 class Referensi(BaseModel):
     kategori: list[str]
+    berat_gram: list[int]
     lokasi_gudang: list[str]
 
 class PesanRespons(BaseModel):
@@ -137,11 +154,15 @@ def baca_root():
     "/referensi",
     tags=["Referensi"],
     response_model=Referensi,
-    summary="Ambil pilihan kategori & lokasi gudang",
+    summary="Ambil pilihan kategori, kemasan & lokasi gudang",
     description="Dipakai frontend untuk mengisi dropdown form tambah barang.",
 )
 def ambil_referensi():
-    return {"kategori": [k.value for k in Kategori], "lokasi_gudang": list(LOKASI_GUDANG)}
+    return {
+        "kategori": [k.value for k in Kategori],
+        "berat_gram": list(BERAT_KEMASAN),
+        "lokasi_gudang": list(LOKASI_GUDANG),
+    }
 
 @app.get(
     "/barang",
