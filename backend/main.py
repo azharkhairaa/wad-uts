@@ -17,7 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # skema request: field wajib, stok harus angka bulat >= 0 (string ditolak)
 class BarangIn(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
@@ -27,7 +26,6 @@ class BarangIn(BaseModel):
     jumlah_stok: int = Field(ge=0, strict=True)
     lokasi_gudang: str = Field(min_length=1)
 
-
 # skema response
 class Barang(BaseModel):
     id: int
@@ -36,26 +34,21 @@ class Barang(BaseModel):
     jumlah_stok: int
     lokasi_gudang: str
 
-
 def muat_seed() -> list[dict]:
     with SEED_FILE.open(encoding="utf-8") as f:
         # validasi seed lewat skema
         return [Barang(**item).model_dump() for item in json.load(f)]
 
-
 # data in-memory, kembali ke seed tiap restart
 barang_db: list[dict] = muat_seed()
-
 
 @app.get("/")
 def baca_root():
     return {"pesan": "Backend inventory roastery jalan"}
 
-
 @app.get("/barang", response_model=list[Barang])
 def ambil_semua_barang():
     return barang_db
-
 
 @app.post("/barang", response_model=Barang, status_code=201)
 def tambah_barang(barang: BarangIn):
@@ -63,7 +56,6 @@ def tambah_barang(barang: BarangIn):
     barang_baru = {"id": id_baru, **barang.model_dump()}
     barang_db.append(barang_baru)
     return barang_baru
-
 
 @app.delete("/barang/{barang_id}")
 def hapus_barang(barang_id: int):

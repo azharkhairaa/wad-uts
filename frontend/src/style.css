@@ -1,0 +1,118 @@
+:root {
+  /* palet */
+  --abu: #6d6666;
+  --abu-muda: #b4adad;
+  --krem: #eedab5;
+  --mauve: #855b5b;
+  --cokelat-tua: #362323;
+
+  --warna-bg: color-mix(in srgb, var(--krem) 30%, #fff);
+  --warna-kartu: #ffffff;
+  --warna-utama: var(--mauve);
+  --warna-utama-gelap: var(--cokelat-tua);
+  --warna-teks: var(--cokelat-tua);
+  --warna-redup: var(--abu);
+  --warna-garis: color-mix(in srgb, var(--abu-muda) 45%, #fff);
+  --warna-hover: color-mix(in srgb, var(--krem) 35%, #fff);
+  --warna-error: #b42318;
+
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  color: var(--warna-teks);
+  background: var(--warna-bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  background: var(--warna-utama);
+  color: #fff;
+}
+
+button:hover {
+  background: var(--warna-utama-gelap);
+}
+
+/* layout */
+.header {
+  padding: 1.5rem 2rem;
+  background: var(--warna-utama-gelap);
+  color: #fff;
+}
+
+.header p {
+  margin-top: 0.25rem;
+  color: var(--krem);
+}
+
+.konten {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+/* status loading / kosong / error */
+.info {
+  padding: 2rem;
+  text-align: center;
+  color: var(--warna-redup);
+  background: var(--warna-kartu);
+  border-radius: 12px;
+}
+
+.info-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--warna-error);
+}
+
+/* tabel barang */
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--warna-kartu);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tabel th,
+.tabel td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--warna-garis);
+}
+
+.tabel th {
+  background: var(--warna-utama);
+  color: #fff;
+  font-weight: 600;
+}
+
+.tabel tbody tr:hover {
+  background: var(--warna-hover);
+}
+
+.tabel .angka {
+  text-align: right;
+}
