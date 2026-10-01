@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
 import { ambilSemuaBarang } from "./api"
+import { statusStok } from "./stok"
 import TabelBarang from "./components/TabelBarang.vue"
 
 const daftarBarang = ref([])
@@ -25,6 +26,19 @@ const barangTerurut = computed(() => {
   const hasil = [...barangTersaring.value].sort((a, b) => a.nama.localeCompare(b.nama, "id"))
   return urutan.value === "az" ? hasil : hasil.reverse()
 })
+
+// ringkasan dihitung dari seluruh data
+const totalBarang = computed(() => daftarBarang.value.length)
+
+const jumlahPerluRestok = computed(
+  () => daftarBarang.value.filter((barang) => statusStok(barang.jumlah_stok) !== "aman").length,
+)
+
+const jumlahKategori = computed(() => new Set(daftarBarang.value.map((barang) => barang.kategori)).size)
+
+const totalUnit = computed(() =>
+  daftarBarang.value.reduce((total, barang) => total + barang.jumlah_stok, 0),
+)
 
 async function muatBarang() {
   status.value = "loading"
@@ -59,6 +73,25 @@ onMounted(muatBarang)
       </div>
 
       <div v-else>
+        <section class="ringkasan">
+          <div class="tile">
+            <p class="tile-label">Total Barang</p>
+            <p class="tile-nilai">{{ totalBarang }}</p>
+          </div>
+          <div class="tile tile-peringatan">
+            <p class="tile-label">Stok Menipis + Habis</p>
+            <p class="tile-nilai">{{ jumlahPerluRestok }}</p>
+          </div>
+          <div class="tile">
+            <p class="tile-label">Jumlah Kategori</p>
+            <p class="tile-nilai">{{ jumlahKategori }}</p>
+          </div>
+          <div class="tile">
+            <p class="tile-label">Total Unit</p>
+            <p class="tile-nilai">{{ totalUnit.toLocaleString("id-ID") }}</p>
+          </div>
+        </section>
+
         <div class="toolbar">
           <input v-model="kataKunci" type="search" class="input-cari" placeholder="Cari nama atau kategori..." />
           <div class="grup-urut">
