@@ -58,8 +58,8 @@ class BarangIn(BaseModel):
     jumlah_stok: int = Field(ge=0, strict=True)
     lokasi_gudang: LokasiGudang
 
-# tambah stok: hanya boleh menambah, field lain tidak bisa diubah
-class TambahStokIn(BaseModel):
+# body tambah stok & jual: hanya jumlah, field lain ditolak
+class JumlahStokIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     jumlah: int = Field(ge=1, strict=True)
@@ -79,6 +79,12 @@ def muat_seed() -> list[dict]:
 
 # data in-memory, kembali ke seed tiap restart
 barang_db: list[dict] = muat_seed()
+
+def cari_barang(barang_id: int) -> dict:
+    for barang in barang_db:
+        if barang["id"] == barang_id:
+            return barang
+    raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
 
 @app.get("/")
 def baca_root():
@@ -109,9 +115,16 @@ def hapus_barang(barang_id: int):
     raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
 
 @app.patch("/barang/{barang_id}/stok", response_model=Barang)
-def tambah_stok(barang_id: int, data: TambahStokIn):
-    for barang in barang_db:
-        if barang["id"] == barang_id:
-            barang["jumlah_stok"] += data.jumlah
-            return barang
-    raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
+def tambah_stok(barang_id: int, data: JumlahStokIn):
+    barang = cari_barang(barang_id)
+    barang["jumlah_stok"] += data.jumlah
+    return barang
+
+# jual: stok berkurang, tidak boleh melebihi stok yang ada
+@app.patch("/barang/{barang_id}/jual", response_model=Barang)
+def jual_barang(barang_id: int, data: JumlahStokIn):
+    barang = cari_barang(barang_id)
+    if data.jumlah > barang["jumlah_stok"]:
+        raise HTTPException(status_code=409, detail=f"Stok tidak cukup, tersisa {barang['jumlah_stok']} pack")
+    barang["jumlah_stok"] -= data.jumlah
+    return barang
