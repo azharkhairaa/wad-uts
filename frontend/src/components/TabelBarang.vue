@@ -1,4 +1,5 @@
 <script setup>
+import { formatKemasan } from "../format"
 import BadgeStok from "./BadgeStok.vue"
 
 defineProps({
@@ -15,7 +16,8 @@ const emit = defineEmits(["hapus", "tambah-stok", "jual"])
         <tr>
           <th>Nama</th>
           <th>Kategori</th>
-          <th class="angka">Stok</th>
+          <th>Kemasan</th>
+          <th class="angka">Stok (pack)</th>
           <th>Status</th>
           <th>Lokasi Gudang</th>
           <th></th>
@@ -25,7 +27,8 @@ const emit = defineEmits(["hapus", "tambah-stok", "jual"])
         <tr v-for="barang in daftarBarang" :key="barang.id">
           <td class="kolom-nama">{{ barang.nama }}</td>
           <td data-label="Kategori">{{ barang.kategori }}</td>
-          <td class="angka" data-label="Stok">{{ barang.jumlah_stok }}</td>
+          <td data-label="Kemasan">{{ formatKemasan(barang.berat_gram) }}</td>
+          <td class="angka" data-label="Stok (pack)">{{ barang.jumlah_stok }}</td>
           <td data-label="Status">
             <BadgeStok :jumlah="barang.jumlah_stok" />
           </td>

@@ -1,14 +1,16 @@
 <script setup>
 import { ref } from "vue"
 import { tambahBarang } from "../api"
+import { formatKemasan } from "../format"
 
 defineProps({
   daftarKategori: { type: Array, default: () => [] },
+  daftarBerat: { type: Array, default: () => [] },
   daftarLokasi: { type: Array, default: () => [] },
 })
 const emit = defineEmits(["tersimpan", "batal"])
 
-const formKosong = () => ({ nama: "", kategori: "", jumlah_stok: 0, lokasi_gudang: "" })
+const formKosong = () => ({ nama: "", kategori: "", berat_gram: "", jumlah_stok: 0, lokasi_gudang: "" })
 
 // state lokal form
 const form = ref(formKosong())
@@ -37,7 +39,7 @@ async function simpan() {
     <div class="form-grid">
       <label>
         Nama
-        <input v-model="form.nama" required placeholder="mis. Arabika Kerinci 200 gr" />
+        <input v-model="form.nama" required placeholder="mis. Arabika Kerinci" />
       </label>
       <label>
         Kategori
@@ -47,10 +49,17 @@ async function simpan() {
         </select>
       </label>
       <label>
-        Jumlah Stok
-        <input v-model.number="form.jumlah_stok" type="number" min="0" step="1" required />
+        Kemasan
+        <select v-model.number="form.berat_gram" required>
+          <option value="" disabled>Pilih berat per pack</option>
+          <option v-for="berat in daftarBerat" :key="berat" :value="berat">{{ formatKemasan(berat) }}</option>
+        </select>
       </label>
       <label>
+        Jumlah Stok (pack)
+        <input v-model.number="form.jumlah_stok" type="number" min="0" step="1" required />
+      </label>
+      <label class="form-lebar">
         Lokasi Gudang
         <select v-model="form.lokasi_gudang" required>
           <option value="" disabled>Pilih lokasi gudang</option>

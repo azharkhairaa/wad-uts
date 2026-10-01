@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
 import { jualBarang, tambahStok } from "../api"
+import { formatKemasan, formatKg } from "../format"
 import BadgeStok from "./BadgeStok.vue"
 
 const props = defineProps({
@@ -54,11 +55,11 @@ onMounted(() => inputJumlah.value?.focus())
       @keydown.esc="emit('batal')"
     >
       <h2>{{ modeJual ? "Jual Barang" : "Tambah Stok" }}</h2>
-      <p class="dialog-nama">{{ barang.nama }}</p>
+      <p class="dialog-nama">{{ barang.nama }} · {{ formatKemasan(barang.berat_gram) }}</p>
 
       <div class="dialog-stok">
         <span>Stok sekarang</span>
-        <strong>{{ barang.jumlah_stok }} pack</strong>
+        <strong>{{ barang.jumlah_stok }} pack · {{ formatKg(barang.jumlah_stok * barang.berat_gram) }}</strong>
         <BadgeStok :jumlah="barang.jumlah_stok" />
       </div>
 
@@ -79,7 +80,7 @@ onMounted(() => inputJumlah.value?.focus())
 
       <div class="dialog-stok">
         <span>{{ modeJual ? "Setelah dijual" : "Setelah ditambah" }}</span>
-        <strong>{{ stokBaru }} pack</strong>
+        <strong>{{ stokBaru }} pack · {{ formatKg(stokBaru * barang.berat_gram) }}</strong>
         <BadgeStok :jumlah="stokBaru" />
       </div>
 

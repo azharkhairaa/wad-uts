@@ -128,6 +128,12 @@ button:disabled {
   font-weight: 700;
 }
 
+.tile-sub {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--warna-redup);
+}
+
 /* bar ringkasan stok per kategori */
 .kartu-kategori {
   margin-bottom: 1.5rem;
@@ -149,11 +155,11 @@ button:disabled {
   list-style: none;
 }
 
+/* nama kategori di atas, angka di baris baru rata kiri */
 .bar-label {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.25rem 1rem;
+  flex-direction: column;
+  gap: 0.15rem;
   margin-bottom: 0.3rem;
   font-size: 0.9rem;
 }
@@ -289,6 +295,10 @@ button:disabled {
   color: var(--warna-redup);
 }
 
+.form-lebar {
+  grid-column: 1 / -1;
+}
+
 .form-error {
   margin-top: 1rem;
   padding: 0.6rem 0.8rem;
@@ -385,6 +395,10 @@ button:disabled {
 
 .tabel .angka {
   text-align: right;
+}
+
+.tabel th.angka {
+  white-space: nowrap;
 }
 
 .tabel .kolom-aksi {
@@ -649,6 +663,10 @@ button:disabled {
   .tabel th,
   .tabel td {
     padding: 0.6rem 0.75rem;
+  }
+
+  .tabel th.angka {
+    white-space: normal;
   }
 
   /* tombol aksi ditumpuk: tambah stok di atas, jual & hapus di bawah */
