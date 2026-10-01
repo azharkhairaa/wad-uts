@@ -58,6 +58,12 @@ class BarangIn(BaseModel):
     jumlah_stok: int = Field(ge=0, strict=True)
     lokasi_gudang: LokasiGudang
 
+# tambah stok: hanya boleh menambah, field lain tidak bisa diubah
+class TambahStokIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    jumlah: int = Field(ge=1, strict=True)
+
 # skema response
 class Barang(BaseModel):
     id: int
@@ -100,4 +106,12 @@ def hapus_barang(barang_id: int):
         if barang["id"] == barang_id:
             barang_db.pop(indeks)
             return {"pesan": "Barang dihapus"}
+    raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
+
+@app.patch("/barang/{barang_id}/stok", response_model=Barang)
+def tambah_stok(barang_id: int, data: TambahStokIn):
+    for barang in barang_db:
+        if barang["id"] == barang_id:
+            barang["jumlah_stok"] += data.jumlah
+            return barang
     raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
