@@ -294,12 +294,15 @@ button:disabled {
 }
 
 /* tabel barang */
+.tabel-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 .tabel {
   width: 100%;
   border-collapse: collapse;
   background: var(--warna-kartu);
-  border-radius: 12px;
-  overflow: hidden;
 }
 
 .tabel th,
@@ -438,5 +441,122 @@ button:disabled {
 
   .spinner {
     animation-duration: 2s;
+  }
+}
+
+/* responsif - tablet: 768px - 1023px */
+@media (max-width: 1023px) {
+  .ringkasan {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* tabel dipadatkan supaya muat; kalau tetap kelebaran, tabel digeser*/
+  .tabel-wrapper {
+    overflow-x: auto;
+  }
+
+  .tabel th,
+  .tabel td {
+    padding: 0.6rem 0.75rem;
+  }
+}
+
+/* responsif - mobile: < 768px */
+@media (max-width: 767px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.4rem;
+  }
+
+  .konten {
+    padding: 1rem;
+  }
+
+  .ringkasan {
+    gap: 0.75rem;
+  }
+
+  .tile {
+    padding: 0.75rem 1rem;
+  }
+
+  .tile-nilai {
+    font-size: 1.4rem;
+  }
+
+  .input-cari {
+    flex-basis: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .notifikasi {
+    right: 1rem;
+    bottom: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+
+  /* tabel berubah jadi daftar kartu */
+  .tabel-wrapper {
+    overflow: visible;
+  }
+
+  .tabel {
+    background: transparent;
+  }
+
+  .tabel thead {
+    display: none;
+  }
+
+  .tabel tbody {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .tabel tr {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: var(--warna-kartu);
+    border-radius: 12px;
+  }
+
+  .tabel td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.3rem 0;
+    border: none;
+    text-align: right;
+  }
+
+  .tabel td::before {
+    content: attr(data-label);
+    color: var(--warna-redup);
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  .tabel .kolom-nama::before,
+  .tabel .kolom-aksi::before {
+    content: none;
+  }
+
+  .tabel .kolom-nama {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid var(--warna-garis);
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .tabel .kolom-aksi {
+    justify-content: flex-end;
+    padding-top: 0.5rem;
   }
 }
