@@ -16,6 +16,11 @@
   --warna-hover: color-mix(in srgb, var(--krem) 35%, #fff);
   --warna-error: #b42318;
 
+  /* warna aksi, mengikuti warna metode di Swagger /docs */
+  --warna-post: #49cc90;
+  --warna-delete: #f93e3e;
+  --warna-get: #61affe;
+
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
   color: var(--warna-teks);
   background: var(--warna-bg);
@@ -51,6 +56,21 @@ button {
 
 button:hover {
   background: var(--warna-utama-gelap);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tombol-sekunder {
+  background: var(--warna-kartu);
+  color: var(--warna-teks);
+  border: 1px solid var(--abu-muda);
+}
+
+.tombol-sekunder:hover {
+  background: var(--warna-hover);
 }
 
 /* layout */
@@ -117,6 +137,11 @@ button:hover {
 
 .input-cari {
   flex: 1 1 240px;
+}
+
+.input-cari,
+.form-barang input,
+.form-barang select {
   font: inherit;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--abu-muda);
@@ -126,7 +151,9 @@ button:hover {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.input-cari:focus {
+.input-cari:focus,
+.form-barang input:focus,
+.form-barang select:focus {
   outline: none;
   border-color: var(--mauve);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--mauve) 25%, transparent);
@@ -159,6 +186,66 @@ button:hover {
 .grup-urut button.aktif {
   background: var(--mauve);
   color: #fff;
+}
+
+.tombol-tambah {
+  margin-left: auto;
+}
+
+/* tombol tambah & simpan = hijau POST */
+.tombol-tambah,
+.tombol-simpan {
+  background: var(--warna-post);
+  font-weight: 600;
+}
+
+.tombol-tambah:hover,
+.tombol-simpan:hover {
+  background: color-mix(in srgb, var(--warna-post) 82%, #000);
+}
+
+/* form tambah barang */
+.form-barang {
+  margin-bottom: 1rem;
+  padding: 1.25rem;
+  background: var(--warna-kartu);
+  border-radius: 12px;
+  border-top: 4px solid var(--mauve);
+}
+
+.form-barang h2 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--warna-redup);
+}
+
+.form-error {
+  margin-top: 1rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: #f6dcdc;
+  color: var(--warna-error);
+  font-size: 0.9rem;
+}
+
+.form-aksi {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .jumlah-hasil {
@@ -240,6 +327,43 @@ button:hover {
   text-align: right;
 }
 
+.tabel .kolom-aksi {
+  text-align: right;
+}
+
+/* tombol hapus = merah DELETE */
+.tombol-hapus {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--warna-delete);
+}
+
+.tombol-hapus:hover {
+  background: color-mix(in srgb, var(--warna-delete) 82%, #000);
+}
+
+/* notifikasi sukses / error */
+.notifikasi {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 10;
+  max-width: calc(100% - 3rem);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--cokelat-tua) 25%, transparent);
+}
+
+.notifikasi-sukses {
+  background: var(--cokelat-tua);
+}
+
+.notifikasi-error {
+  background: var(--warna-error);
+}
+
 /* badge status stok */
 .badge {
   display: inline-block;
@@ -275,6 +399,17 @@ button:hover {
 .pudar-leave-to {
   opacity: 0;
   transform: translateY(6px);
+}
+
+.notif-enter-active,
+.notif-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.notif-enter-from,
+.notif-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
 }
 
 /* transisi baris tabel saat cari & urut */

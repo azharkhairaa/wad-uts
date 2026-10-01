@@ -1,5 +1,14 @@
 const API_URL = "http://127.0.0.1:8000"
 
+// ubah "detail" error FastAPI (string atau daftar validasi 422) jadi satu kalimat
+function pesanDariDetail(detail) {
+  if (typeof detail === "string") return detail
+  if (Array.isArray(detail)) {
+    return detail.map((galat) => `${galat.loc.at(-1)}: ${galat.msg}`).join("; ")
+  }
+  return null
+}
+
 async function request(path, options) {
   let response
   try {
@@ -10,11 +19,28 @@ async function request(path, options) {
   }
 
   if (!response.ok) {
-    throw new Error(`Permintaan gagal (HTTP ${response.status})`)
+    const isi = await response.json().catch(() => null)
+    throw new Error(pesanDariDetail(isi?.detail) ?? `Permintaan gagal (HTTP ${response.status})`)
   }
   return response.json()
 }
 
 export function ambilSemuaBarang() {
   return request("/barang")
+}
+
+export function ambilReferensi() {
+  return request("/referensi")
+}
+
+export function tambahBarang(barang) {
+  return request("/barang", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(barang),
+  })
+}
+
+export function hapusBarang(id) {
+  return request(`/barang/${id}`, { method: "DELETE" })
 }

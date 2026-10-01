@@ -1,14 +1,19 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
-import { ambilSemuaBarang } from "./api"
+import { ambilReferensi, ambilSemuaBarang, hapusBarang } from "./api"
 import { statusStok } from "./stok"
+import FormBarang from "./components/FormBarang.vue"
 import TabelBarang from "./components/TabelBarang.vue"
 
 const daftarBarang = ref([])
+const referensi = ref({ kategori: [], lokasi_gudang: [] })
 const status = ref("loading") // loading | error | success
 const pesanError = ref("")
 const kataKunci = ref("")
 const urutan = ref("az") // az | za
+const formTerbuka = ref(false)
+const idSedangDihapus = ref(null)
+const notifikasi = ref(null) // { jenis: sukses | error, pesan }
 
 // cari berdasarkan nama atau kategori
 const barangTersaring = computed(() => {
@@ -43,11 +48,49 @@ const totalUnit = computed(() =>
 async function muatBarang() {
   status.value = "loading"
   try {
-    daftarBarang.value = await ambilSemuaBarang()
+    const [barang, dataReferensi] = await Promise.all([ambilSemuaBarang(), ambilReferensi()])
+    daftarBarang.value = barang
+    referensi.value = dataReferensi
     status.value = "success"
   } catch (error) {
     pesanError.value = error.message
     status.value = "error"
+  }
+}
+
+// muat ulang tanpa layar loading, dipakai setelah tambah/hapus
+async function segarkanBarang() {
+  try {
+    daftarBarang.value = await ambilSemuaBarang()
+  } catch (error) {
+    tampilkanNotifikasi("error", error.message)
+  }
+}
+
+let timerNotifikasi
+function tampilkanNotifikasi(jenis, pesan) {
+  notifikasi.value = { jenis, pesan }
+  clearTimeout(timerNotifikasi)
+  timerNotifikasi = setTimeout(() => (notifikasi.value = null), 3000)
+}
+
+async function onBarangTersimpan(barang) {
+  formTerbuka.value = false
+  tampilkanNotifikasi("sukses", `"${barang.nama}" ditambahkan`)
+  await segarkanBarang()
+}
+
+async function onHapus(barang) {
+  if (!confirm(`Hapus "${barang.nama}" dari inventaris?`)) return
+  idSedangDihapus.value = barang.id
+  try {
+    await hapusBarang(barang.id)
+    tampilkanNotifikasi("sukses", `"${barang.nama}" dihapus`)
+    await segarkanBarang()
+  } catch (error) {
+    tampilkanNotifikasi("error", error.message)
+  } finally {
+    idSedangDihapus.value = null
   }
 }
 
@@ -98,7 +141,20 @@ onMounted(muatBarang)
             <button type="button" :class="{ aktif: urutan === 'az' }" @click="urutan = 'az'">A-Z</button>
             <button type="button" :class="{ aktif: urutan === 'za' }" @click="urutan = 'za'">Z-A</button>
           </div>
+          <button type="button" class="tombol-tambah" @click="formTerbuka = !formTerbuka">
+            {{ formTerbuka ? "Tutup Form" : "+ Tambah Barang" }}
+          </button>
         </div>
+
+        <Transition name="pudar">
+          <FormBarang
+            v-if="formTerbuka"
+            :daftar-kategori="referensi.kategori"
+            :daftar-lokasi="referensi.lokasi_gudang"
+            @tersimpan="onBarangTersimpan"
+            @batal="formTerbuka = false"
+          />
+        </Transition>
 
         <Transition name="pudar" mode="out-in">
           <p v-if="daftarBarang.length === 0" class="info">Belum ada barang di gudang.</p>
@@ -107,10 +163,16 @@ onMounted(muatBarang)
           </p>
           <div v-else>
             <p class="jumlah-hasil">Menampilkan {{ barangTerurut.length }} dari {{ daftarBarang.length }} barang</p>
-            <TabelBarang :daftar-barang="barangTerurut" />
+            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="onHapus" />
           </div>
         </Transition>
       </div>
     </Transition>
   </main>
+
+  <Transition name="notif">
+    <div v-if="notifikasi" class="notifikasi" :class="`notifikasi-${notifikasi.jenis}`" role="status">
+      {{ notifikasi.pesan }}
+    </div>
+  </Transition>
 </template>
