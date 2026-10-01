@@ -1,11 +1,11 @@
 <script setup>
-import { LABEL_STATUS, statusStok } from "../stok"
+import BadgeStok from "./BadgeStok.vue"
 
 defineProps({
   daftarBarang: { type: Array, required: true },
   idSedangDihapus: { type: Number, default: null },
 })
-const emit = defineEmits(["hapus"])
+const emit = defineEmits(["hapus", "tambah-stok"])
 </script>
 
 <template>
@@ -27,27 +27,21 @@ const emit = defineEmits(["hapus"])
           <td data-label="Kategori">{{ barang.kategori }}</td>
           <td class="angka" data-label="Stok">{{ barang.jumlah_stok }}</td>
           <td data-label="Status">
-            <span
-              class="badge"
-              :class="{
-                'badge-aman': statusStok(barang.jumlah_stok) === 'aman',
-                'badge-menipis': statusStok(barang.jumlah_stok) === 'menipis',
-                'badge-habis': statusStok(barang.jumlah_stok) === 'habis',
-              }"
-            >
-              {{ LABEL_STATUS[statusStok(barang.jumlah_stok)] }}
-            </span>
+            <BadgeStok :jumlah="barang.jumlah_stok" />
           </td>
           <td data-label="Lokasi">{{ barang.lokasi_gudang }}</td>
           <td class="kolom-aksi">
-            <button
-              type="button"
-              class="tombol-hapus"
-              :disabled="idSedangDihapus === barang.id"
-              @click="emit('hapus', barang)"
-            >
-              {{ idSedangDihapus === barang.id ? "Menghapus..." : "Hapus" }}
-            </button>
+            <div class="aksi-baris">
+              <button type="button" class="tombol-stok" @click="emit('tambah-stok', barang)">Tambah Stok</button>
+              <button
+                type="button"
+                class="tombol-hapus"
+                :disabled="idSedangDihapus === barang.id"
+                @click="emit('hapus', barang)"
+              >
+                {{ idSedangDihapus === barang.id ? "Menghapus..." : "Hapus" }}
+              </button>
+            </div>
           </td>
         </tr>
       </TransitionGroup>

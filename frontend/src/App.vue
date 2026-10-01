@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { ambilReferensi, ambilSemuaBarang, hapusBarang } from "./api"
 import { statusStok } from "./stok"
+import DialogTambahStok from "./components/DialogTambahStok.vue"
 import FormBarang from "./components/FormBarang.vue"
 import TabelBarang from "./components/TabelBarang.vue"
 
@@ -13,6 +14,7 @@ const kataKunci = ref("")
 const urutan = ref("az") // az | za
 const formTerbuka = ref(false)
 const idSedangDihapus = ref(null)
+const barangDipilih = ref(null) // barang yang sedang ditambah stoknya
 const notifikasi = ref(null) // { jenis: sukses | error, pesan }
 
 // cari berdasarkan nama atau kategori
@@ -77,6 +79,12 @@ function tampilkanNotifikasi(jenis, pesan) {
 async function onBarangTersimpan(barang) {
   formTerbuka.value = false
   tampilkanNotifikasi("sukses", `"${barang.nama}" ditambahkan`)
+  await segarkanBarang()
+}
+
+async function onStokDitambah({ barang, jumlah }) {
+  barangDipilih.value = null
+  tampilkanNotifikasi("sukses", `Stok "${barang.nama}" +${jumlah}, sekarang ${barang.jumlah_stok} pack`)
   await segarkanBarang()
 }
 
@@ -163,12 +171,21 @@ onMounted(muatBarang)
           </p>
           <div v-else>
             <p class="jumlah-hasil">Menampilkan {{ barangTerurut.length }} dari {{ daftarBarang.length }} barang</p>
-            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="onHapus" />
+            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="onHapus" @tambah-stok="barangDipilih = $event" />
           </div>
         </Transition>
       </div>
     </Transition>
   </main>
+
+  <Transition name="dialog">
+    <DialogTambahStok
+      v-if="barangDipilih"
+      :barang="barangDipilih"
+      @tersimpan="onStokDitambah"
+      @batal="barangDipilih = null"
+    />
+  </Transition>
 
   <Transition name="notif">
     <div v-if="notifikasi" class="notifikasi" :class="`notifikasi-${notifikasi.jenis}`" role="status">

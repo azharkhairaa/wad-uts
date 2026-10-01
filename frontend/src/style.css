@@ -334,6 +334,28 @@ button:disabled {
   text-align: right;
 }
 
+.aksi-baris {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+/* tombol tambah stok = biru GET */
+.tombol-stok {
+  font-weight: 600;
+  background: var(--warna-get);
+}
+
+.tombol-stok:hover {
+  background: color-mix(in srgb, var(--warna-get) 82%, #000);
+}
+
+.tabel .tombol-stok {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
 /* tombol hapus = merah DELETE */
 .tombol-hapus {
   padding: 0.3rem 0.75rem;
@@ -365,6 +387,72 @@ button:disabled {
 
 .notifikasi-error {
   background: var(--warna-error);
+}
+
+/* dialog tambah stok */
+.dialog-latar {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--cokelat-tua) 45%, transparent);
+}
+
+.dialog {
+  width: min(420px, 100%);
+  padding: 1.5rem;
+  background: var(--warna-kartu);
+  border-radius: 14px;
+  border-top: 4px solid var(--warna-get);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--cokelat-tua) 30%, transparent);
+}
+
+.dialog h2 {
+  font-size: 1.1rem;
+}
+
+.dialog-nama {
+  margin: 0.25rem 0 1rem;
+  color: var(--warna-redup);
+}
+
+.dialog-stok {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+}
+
+.dialog-stok span:first-child {
+  flex: 1;
+  color: var(--warna-redup);
+  font-size: 0.9rem;
+}
+
+.dialog-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--warna-redup);
+}
+
+.dialog-input input {
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--abu-muda);
+  border-radius: 8px;
+  color: var(--warna-teks);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dialog-input input:focus {
+  outline: none;
+  border-color: var(--warna-get);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warna-get) 30%, transparent);
 }
 
 /* badge status stok */
@@ -413,6 +501,23 @@ button:disabled {
 .notif-leave-to {
   opacity: 0;
   transform: translateY(12px);
+}
+
+.dialog-enter-active,
+.dialog-leave-active,
+.dialog-enter-active .dialog,
+.dialog-leave-active .dialog {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.dialog-enter-from,
+.dialog-leave-to {
+  opacity: 0;
+}
+
+.dialog-enter-from .dialog,
+.dialog-leave-to .dialog {
+  transform: scale(0.95);
 }
 
 /* transisi baris tabel saat cari & urut */

@@ -44,3 +44,11 @@ export function tambahBarang(barang) {
 export function hapusBarang(id) {
   return request(`/barang/${id}`, { method: "DELETE" })
 }
+
+export function tambahStok(id, jumlah) {
+  return request(`/barang/${id}/stok`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jumlah }),
+  })
+}
