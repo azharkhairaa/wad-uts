@@ -5,7 +5,7 @@ defineProps({
   daftarBarang: { type: Array, required: true },
   idSedangDihapus: { type: Number, default: null },
 })
-const emit = defineEmits(["hapus", "tambah-stok"])
+const emit = defineEmits(["hapus", "tambah-stok", "jual"])
 </script>
 
 <template>
@@ -33,6 +33,14 @@ const emit = defineEmits(["hapus", "tambah-stok"])
           <td class="kolom-aksi">
             <div class="aksi-baris">
               <button type="button" class="tombol-stok" @click="emit('tambah-stok', barang)">Tambah Stok</button>
+              <button
+                type="button"
+                class="tombol-jual"
+                :disabled="barang.jumlah_stok === 0"
+                @click="emit('jual', barang)"
+              >
+                Jual
+              </button>
               <button
                 type="button"
                 class="tombol-hapus"

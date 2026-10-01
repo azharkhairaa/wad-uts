@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { ambilReferensi, ambilSemuaBarang, hapusBarang } from "./api"
 import { statusStok } from "./stok"
-import DialogTambahStok from "./components/DialogTambahStok.vue"
+import DialogStok from "./components/DialogStok.vue"
 import FormBarang from "./components/FormBarang.vue"
 import TabelBarang from "./components/TabelBarang.vue"
 
@@ -14,7 +14,7 @@ const kataKunci = ref("")
 const urutan = ref("az") // az | za
 const formTerbuka = ref(false)
 const idSedangDihapus = ref(null)
-const barangDipilih = ref(null) // barang yang sedang ditambah stoknya
+const aksiStok = ref(null) // { barang, mode: tambah | jual }
 const notifikasi = ref(null) // { jenis: sukses | error, pesan }
 
 // cari berdasarkan nama atau kategori
@@ -82,9 +82,13 @@ async function onBarangTersimpan(barang) {
   await segarkanBarang()
 }
 
-async function onStokDitambah({ barang, jumlah }) {
-  barangDipilih.value = null
-  tampilkanNotifikasi("sukses", `Stok "${barang.nama}" +${jumlah}, sekarang ${barang.jumlah_stok} pack`)
+async function onStokDiubah({ barang, jumlah, mode }) {
+  aksiStok.value = null
+  const pesan =
+    mode === "jual"
+      ? `"${barang.nama}" terjual ${jumlah}, sisa ${barang.jumlah_stok} pack`
+      : `Stok "${barang.nama}" +${jumlah}, sekarang ${barang.jumlah_stok} pack`
+  tampilkanNotifikasi("sukses", pesan)
   await segarkanBarang()
 }
 
@@ -171,7 +175,9 @@ onMounted(muatBarang)
           </p>
           <div v-else>
             <p class="jumlah-hasil">Menampilkan {{ barangTerurut.length }} dari {{ daftarBarang.length }} barang</p>
-            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="onHapus" @tambah-stok="barangDipilih = $event" />
+            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="onHapus" @tambah-stok="aksiStok = { barang: $event, mode: 'tambah' }"
+              @jual="aksiStok = { barang: $event, mode: 'jual' }"
+            />
           </div>
         </Transition>
       </div>
@@ -179,11 +185,12 @@ onMounted(muatBarang)
   </main>
 
   <Transition name="dialog">
-    <DialogTambahStok
-      v-if="barangDipilih"
-      :barang="barangDipilih"
-      @tersimpan="onStokDitambah"
-      @batal="barangDipilih = null"
+    <DialogStok
+      v-if="aksiStok"
+      :barang="aksiStok.barang"
+      :mode="aksiStok.mode"
+      @tersimpan="onStokDiubah"
+      @batal="aksiStok = null"
     />
   </Transition>
 

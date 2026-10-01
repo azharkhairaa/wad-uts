@@ -20,6 +20,7 @@
   --warna-post: #49cc90;
   --warna-delete: #f93e3e;
   --warna-get: #61affe;
+  --warna-put: #fca130;
 
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
   color: var(--warna-teks);
@@ -350,7 +351,18 @@ button:disabled {
   background: color-mix(in srgb, var(--warna-get) 82%, #000);
 }
 
-.tabel .tombol-stok {
+/* tombol jual = oranye PUT */
+.tombol-jual {
+  font-weight: 600;
+  background: var(--warna-put);
+}
+
+.tombol-jual:hover {
+  background: color-mix(in srgb, var(--warna-put) 82%, #000);
+}
+
+.tabel .tombol-stok,
+.tabel .tombol-jual {
   padding: 0.3rem 0.75rem;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -409,6 +421,10 @@ button:disabled {
   box-shadow: 0 20px 40px color-mix(in srgb, var(--cokelat-tua) 30%, transparent);
 }
 
+.dialog-jual {
+  border-top-color: var(--warna-put);
+}
+
 .dialog h2 {
   font-size: 1.1rem;
 }
@@ -453,6 +469,16 @@ button:disabled {
   outline: none;
   border-color: var(--warna-get);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--warna-get) 30%, transparent);
+}
+
+.dialog-jual .dialog-input input:focus {
+  border-color: var(--warna-put);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warna-put) 30%, transparent);
+}
+
+.dialog-peringatan {
+  font-size: 0.85rem;
+  color: var(--warna-error);
 }
 
 /* badge status stok */
@@ -564,6 +590,16 @@ button:disabled {
   .tabel td {
     padding: 0.6rem 0.75rem;
   }
+
+  /* tombol aksi ditumpuk: tambah stok di atas, jual & hapus di bawah */
+  .aksi-baris {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aksi-baris .tombol-stok {
+    grid-column: 1 / -1;
+  }
 }
 
 /* responsif - mobile: < 768px */
@@ -663,5 +699,9 @@ button:disabled {
   .tabel .kolom-aksi {
     justify-content: flex-end;
     padding-top: 0.5rem;
+  }
+
+  .aksi-baris {
+    display: flex;
   }
 }

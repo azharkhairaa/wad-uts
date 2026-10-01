@@ -52,3 +52,11 @@ export function tambahStok(id, jumlah) {
     body: JSON.stringify({ jumlah }),
   })
 }
+
+export function jualBarang(id, jumlah) {
+  return request(`/barang/${id}/jual`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jumlah }),
+  })
+}
