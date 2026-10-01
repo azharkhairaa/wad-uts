@@ -46,6 +46,7 @@ button {
   padding: 0.5rem 1rem;
   background: var(--warna-utama);
   color: #fff;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 button:hover {
@@ -86,11 +87,13 @@ button:hover {
   border-radius: 8px;
   background: var(--warna-kartu);
   color: var(--warna-teks);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-cari:focus {
-  outline: 2px solid var(--mauve);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--mauve);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mauve) 25%, transparent);
 }
 
 .grup-urut {
@@ -137,6 +140,28 @@ button:hover {
   border-radius: 12px;
 }
 
+.info-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--warna-garis);
+  border-top-color: var(--mauve);
+  border-radius: 50%;
+  animation: putar 0.8s linear infinite;
+}
+
+@keyframes putar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .info-error {
   display: flex;
   flex-direction: column;
@@ -167,6 +192,10 @@ button:hover {
   font-weight: 600;
 }
 
+.tabel tbody tr {
+  transition: background-color 0.15s ease;
+}
+
 .tabel tbody tr:hover {
   background: var(--warna-hover);
 }
@@ -174,3 +203,44 @@ button:hover {
 .tabel .angka {
   text-align: right;
 }
+
+/* transisi antar-status (loading / error / data / kosong) */
+.pudar-enter-active,
+.pudar-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.pudar-enter-from,
+.pudar-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* transisi baris tabel saat cari & urut */
+.tabel .baris-move,
+.tabel .baris-enter-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.tabel .baris-enter-from {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+
+/* baris yang keluar langsung hilang supaya baris lain bisa bergeser mulus */
+.tabel .baris-leave-active {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+
+  .spinner {
+    animation-duration: 2s;
+  }
+}
+

@@ -47,30 +47,37 @@ onMounted(muatBarang)
   </header>
 
   <main class="konten">
-    <p v-if="status === 'loading'" class="info">Memuat data barang...</p>
-
-    <div v-else-if="status === 'error'" class="info info-error">
-      <p>{{ pesanError }}</p>
-      <button type="button" @click="muatBarang">Coba lagi</button>
-    </div>
-
-    <template v-else>
-      <div class="toolbar">
-        <input v-model="kataKunci" type="search" class="input-cari" placeholder="Cari nama atau kategori..." />
-        <div class="grup-urut">
-          <button type="button" :class="{ aktif: urutan === 'az' }" @click="urutan = 'az'">A-Z</button>
-          <button type="button" :class="{ aktif: urutan === 'za' }" @click="urutan = 'za'">Z-A</button>
-        </div>
+    <Transition name="pudar" mode="out-in">
+      <div v-if="status === 'loading'" class="info info-loading">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Memuat data barang...</p>
       </div>
 
-      <p v-if="daftarBarang.length === 0" class="info">Belum ada barang di gudang.</p>
-      <p v-else-if="barangTerurut.length === 0" class="info">
-        Tidak ada barang yang cocok dengan "{{ kataKunci }}".
-      </p>
-      <template v-else>
-        <p class="jumlah-hasil">Menampilkan {{ barangTerurut.length }} dari {{ daftarBarang.length }} barang</p>
-        <TabelBarang :daftar-barang="barangTerurut" />
-      </template>
-    </template>
+      <div v-else-if="status === 'error'" class="info info-error">
+        <p>{{ pesanError }}</p>
+        <button type="button" @click="muatBarang">Coba lagi</button>
+      </div>
+
+      <div v-else>
+        <div class="toolbar">
+          <input v-model="kataKunci" type="search" class="input-cari" placeholder="Cari nama atau kategori..." />
+          <div class="grup-urut">
+            <button type="button" :class="{ aktif: urutan === 'az' }" @click="urutan = 'az'">A-Z</button>
+            <button type="button" :class="{ aktif: urutan === 'za' }" @click="urutan = 'za'">Z-A</button>
+          </div>
+        </div>
+
+        <Transition name="pudar" mode="out-in">
+          <p v-if="daftarBarang.length === 0" class="info">Belum ada barang di gudang.</p>
+          <p v-else-if="barangTerurut.length === 0" class="info">
+            Tidak ada barang yang cocok dengan "{{ kataKunci }}".
+          </p>
+          <div v-else>
+            <p class="jumlah-hasil">Menampilkan {{ barangTerurut.length }} dari {{ daftarBarang.length }} barang</p>
+            <TabelBarang :daftar-barang="barangTerurut" />
+          </div>
+        </Transition>
+      </div>
+    </Transition>
   </main>
 </template>
