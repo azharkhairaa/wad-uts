@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { ambilReferensi, ambilSemuaBarang, hapusBarang } from "./api"
 import { statusStok } from "./stok"
+import BarKategori from "./components/BarKategori.vue"
 import DialogStok from "./components/DialogStok.vue"
 import FormBarang from "./components/FormBarang.vue"
 import TabelBarang from "./components/TabelBarang.vue"
@@ -146,6 +147,8 @@ onMounted(muatBarang)
             <p class="tile-nilai">{{ totalUnit.toLocaleString("id-ID") }}</p>
           </div>
         </section>
+
+        <BarKategori :daftar-barang="daftarBarang" />
 
         <div class="toolbar">
           <input v-model="kataKunci" type="search" class="input-cari" placeholder="Cari nama atau kategori..." />

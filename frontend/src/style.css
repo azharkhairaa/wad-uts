@@ -128,6 +128,62 @@ button:disabled {
   font-weight: 700;
 }
 
+/* bar ringkasan stok per kategori */
+.kartu-kategori {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--warna-kartu);
+  border-radius: 12px;
+}
+
+.kartu-kategori h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.bar-kategori {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bar-label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.bar-angka {
+  color: var(--warna-redup);
+}
+
+.bar-track {
+  height: 10px;
+  background: color-mix(in srgb, var(--krem) 45%, #fff);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* lebar dari computed; berubah halus saat stok berubah, tumbuh dari 0 saat pertama tampil */
+.bar-isi {
+  height: 100%;
+  background: var(--mauve);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+  animation: tumbuh 0.6s ease;
+}
+
+@keyframes tumbuh {
+  from {
+    width: 0;
+  }
+}
+
 /* toolbar: cari & urutkan */
 .toolbar {
   display: flex;
@@ -572,6 +628,10 @@ button:disabled {
 
   .spinner {
     animation-duration: 2s;
+  }
+
+  .bar-isi {
+    animation: none;
   }
 }
 
