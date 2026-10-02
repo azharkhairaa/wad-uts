@@ -495,6 +495,22 @@ button:disabled {
   border-top-color: var(--warna-put);
 }
 
+.dialog-hapus {
+  border-top-color: var(--warna-delete);
+}
+
+.dialog-pesan {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--warna-redup);
+}
+
+.dialog .tombol-hapus {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
 .dialog h2 {
   font-size: 1.1rem;
 }

@@ -89,7 +89,7 @@ Setiap barang punya field wajib soal (`id`, `nama`, `kategori`, `jumlah_stok`,
 - Badge status stok dengan *conditional class binding*
 - 4 tile ringkasan dari `computed`: **Total Barang**, **Stok Menipis + Habis**, **Jumlah Kategori**, **Total Unit**
 - Form tambah barang (state lokal `ref`) → `POST`, lalu daftar dimuat ulang dari backend
-- Tombol hapus per baris → `DELETE`, dengan konfirmasi
+- Tombol hapus per baris → `DELETE`, dengan dialog konfirmasi
 - Responsif: desktop, tablet, dan mobile (tabel berubah jadi kartu di layar kecil)
 - **Tambah Stok** (`PATCH`) dengan pratinjau stok dan status sebelum disimpan
 - **Jual** (`PATCH`): stok berkurang, ditolak kalau melebihi stok yang ada
@@ -157,5 +157,6 @@ wad-uts/
             ├── BadgeStok.vue     badge status stok
             ├── FormBarang.vue    form tambah barang
             ├── DialogStok.vue    dialog tambah stok & jual
+            ├── DialogHapus.vue   dialog konfirmasi hapus
             └── BarKategori.vue   ringkasan stok per kategori
 ```

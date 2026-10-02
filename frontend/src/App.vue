@@ -4,6 +4,7 @@ import { ambilReferensi, ambilSemuaBarang, hapusBarang } from "./api"
 import { formatKg } from "./format"
 import { statusStok } from "./stok"
 import BarKategori from "./components/BarKategori.vue"
+import DialogHapus from "./components/DialogHapus.vue"
 import DialogStok from "./components/DialogStok.vue"
 import FormBarang from "./components/FormBarang.vue"
 import TabelBarang from "./components/TabelBarang.vue"
@@ -16,6 +17,7 @@ const kataKunci = ref("")
 const urutan = ref("az") // az | za
 const formTerbuka = ref(false)
 const idSedangDihapus = ref(null)
+const barangAkanDihapus = ref(null) // barang yang menunggu konfirmasi hapus
 const aksiStok = ref(null) // { barang, mode: tambah | jual }
 const notifikasi = ref(null) // { jenis: sukses | error, pesan }
 
@@ -98,8 +100,9 @@ async function onStokDiubah({ barang, jumlah, mode }) {
   await segarkanBarang()
 }
 
-async function onHapus(barang) {
-  if (!confirm(`Hapus "${barang.nama}" dari inventaris?`)) return
+// dipanggil setelah konfirmasi di DialogHapus
+async function hapusTerkonfirmasi() {
+  const barang = barangAkanDihapus.value
   idSedangDihapus.value = barang.id
   try {
     await hapusBarang(barang.id)
@@ -109,6 +112,7 @@ async function onHapus(barang) {
     tampilkanNotifikasi("error", error.message)
   } finally {
     idSedangDihapus.value = null
+    barangAkanDihapus.value = null
   }
 }
 
@@ -188,7 +192,7 @@ onMounted(muatBarang)
           </p>
           <div v-else>
             <p class="jumlah-hasil">Menampilkan {{ barangTerurut.length }} dari {{ daftarBarang.length }} barang</p>
-            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="onHapus" @tambah-stok="aksiStok = { barang: $event, mode: 'tambah' }"
+            <TabelBarang :daftar-barang="barangTerurut" :id-sedang-dihapus="idSedangDihapus" @hapus="barangAkanDihapus = $event" @tambah-stok="aksiStok = { barang: $event, mode: 'tambah' }"
               @jual="aksiStok = { barang: $event, mode: 'jual' }"
             />
           </div>
@@ -204,6 +208,16 @@ onMounted(muatBarang)
       :mode="aksiStok.mode"
       @tersimpan="onStokDiubah"
       @batal="aksiStok = null"
+    />
+  </Transition>
+
+  <Transition name="dialog">
+    <DialogHapus
+      v-if="barangAkanDihapus"
+      :barang="barangAkanDihapus"
+      :menghapus="idSedangDihapus !== null"
+      @ya="hapusTerkonfirmasi"
+      @batal="barangAkanDihapus = null"
     />
   </Transition>
 
