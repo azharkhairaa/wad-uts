@@ -95,7 +95,7 @@ class BarangIn(BaseModel):
     jumlah_stok: int = Field(ge=0, strict=True, description="Stok awal dalam pack, bilangan bulat >= 0")
     lokasi_gudang: LokasiGudang = Field(description="Salah satu lokasi dari /referensi")
 
-    # Literal tidak bisa strict, jadi 200.0 / "200" ditolak manual di sini
+    # Literal tidak bisa strict, jadi 200.0 / "200" ditolak manual
     @field_validator("berat_gram", mode="before")
     @classmethod
     def berat_harus_bilangan_bulat(cls, nilai):

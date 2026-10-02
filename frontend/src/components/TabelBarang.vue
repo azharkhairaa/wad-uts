@@ -14,7 +14,7 @@ const emit = defineEmits(["hapus", "tambah-stok", "jual"])
     <table class="tabel">
       <thead>
         <tr>
-          <th>Nama</th>
+          <th>Nama Produk</th>
           <th>Kategori</th>
           <th>Kemasan</th>
           <th class="angka">Stok (pack)</th>
